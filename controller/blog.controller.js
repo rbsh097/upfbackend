@@ -15,7 +15,7 @@ exports.createBlog = async (req, res) => {
       title,
       paragraph,
       linkedinUrl,
-      image: `/uploads/${req.file.filename}`
+      image: req.file.path // Cloudinary URL
     });
 
     res.status(201).json(blog);
@@ -57,7 +57,7 @@ exports.updateBlog = async (req, res) => {
     const updates = req.body;
 
     if (req.file) {
-      updates.image = `/uploads/${req.file.filename}`;
+      updates.image = req.file.path; // Cloudinary URL
     }
 
     const blog = await Blog.findByIdAndUpdate(

@@ -1,13 +1,33 @@
 const multer = require("multer");
-const path = require("path");
+const cloudinary = require("../config/cloudinary");
+const { CloudinaryStorage } = require("multer-storage-cloudinary");
 
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, "uploads/");
-  },
-  filename: (req, file, cb) => {
-    cb(null, Date.now() + path.extname(file.originalname));
+// Configure Cloudinary storage for multer
+const storage = new CloudinaryStorage({
+  cloudinary: cloudinary,
+  params: {
+    folder: "upflair-uploads", // Folder name in Cloudinary
+    allowed_formats: ["jpg", "jpeg", "png", "webp"],
+    transformation: [{ width: 1200, height: 1200, crop: "limit" }] // Optional: resize images
   }
 });
 
-module.exports = multer({ storage });
+// File filter to ensure only images are uploaded
+const fileFilter = (req, file, cb) => {
+  const allowedTypes = /jpeg|jpg|png|webp/;
+  const mime = allowedTypes.test(file.mimetype);
+
+  if (mime) {
+    cb(null, true);
+  } else {
+    cb(new Error("Only images (jpeg, jpg, png, webp) are allowed"));
+  }
+};
+
+module.exports = multer({
+  storage,
+  fileFilter,
+  limits: {
+    fileSize: 5 * 1024 * 1024 // 5MB file size limit
+  }
+});
