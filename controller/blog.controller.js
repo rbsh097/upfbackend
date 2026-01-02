@@ -11,11 +11,17 @@ exports.createBlog = async (req, res) => {
       return res.status(400).json({ message: "Image is required" });
     }
 
+    // Debug: log the file object
+    console.log("Uploaded file:", req.file);
+
+    // Cloudinary returns secure_url or url property
+    const imageUrl = req.file.secure_url || req.file.url || req.file.path;
+
     const blog = await Blog.create({
       title,
       paragraph,
       linkedinUrl,
-      image: req.file.path // Cloudinary URL
+      image: imageUrl
     });
 
     res.status(201).json(blog);
@@ -57,7 +63,7 @@ exports.updateBlog = async (req, res) => {
     const updates = req.body;
 
     if (req.file) {
-      updates.image = req.file.path; // Cloudinary URL
+      updates.image = req.file.secure_url || req.file.url || req.file.path;
     }
 
     const blog = await Blog.findByIdAndUpdate(

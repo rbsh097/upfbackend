@@ -1,15 +1,21 @@
 const multer = require("multer");
-const cloudinary = require("../config/cloudinary");
-const CloudinaryStorage = require("multer-storage-cloudinary");
+const cloudinary = require("cloudinary");
+const cloudinaryStorage = require("multer-storage-cloudinary");
+require("dotenv").config();
+
+// Configure Cloudinary
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_NAME,
+  api_key: process.env.CLOUDINARY_KEY,
+  api_secret: process.env.CLOUDINARY_SECRET
+});
 
 // Configure Cloudinary storage for multer
-const storage = new CloudinaryStorage({
+const storage = cloudinaryStorage({
   cloudinary: cloudinary,
-  params: {
-    folder: "upflair-uploads", // Folder name in Cloudinary
-    allowed_formats: ["jpg", "jpeg", "png", "webp"],
-    transformation: [{ width: 1200, height: 1200, crop: "limit" }] // Optional: resize images
-  }
+  folder: "upflair-uploads",
+  allowedFormats: ["jpg", "jpeg", "png", "webp"],
+  transformation: [{ width: 1200, height: 1200, crop: "limit" }]
 });
 
 // File filter to ensure only images are uploaded

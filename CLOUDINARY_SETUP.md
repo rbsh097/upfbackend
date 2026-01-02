@@ -82,7 +82,7 @@ Fields:
 
 2. **Test image upload** using Postman or similar:
    - Method: POST
-   - URL: http://localhost:5001/api/blogs
+   - URL: https://upfbackend-sc90.onrender.com/api/blogs
    - Headers: Authorization: Bearer <your-token>
    - Body: form-data with image file
 
